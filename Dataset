@@ -1,0 +1,69 @@
+from PIL import Image
+import numpy as np
+import pandas as pd
+import sys
+import os
+import csv
+import matplotlib.pyplot as plt
+import matplotlib.image as mpimg
+import glob
+
+#Define where to look up the images -----------------------------------------------------
+train_path = 'images/train/*.jpg'
+addrs_train = glob.glob(train_path)
+
+#Define features and labels for train ---------------------------------------------------
+
+#Define function createFileList
+def createFileList(myDir, format='.jpg'):
+    fileList = []
+    print("Scanning inside " + myDir)
+    for root, dirs, files in os.walk(myDir, topdown=False):
+        for name in files:
+            if name.endswith(format):
+                fullName = os.path.join(root, name)
+                fileList.append(fullName)
+    return fileList
+
+
+#Load the original image
+myTrainList = createFileList('images/train/')
+
+train_size = 715
+test_size = 107
+image_width = 200
+image_height = 200
+
+train_x_orig = []
+#For each files in the folder, save the grayscale values
+for i, file in enumerate(myTrainList):
+    train_x_orig = np.append(train_x_orig, mpimg.imread(file))
+    
+#train_x_orig = train_x_orig.flatten()
+train_x_orig = np.reshape(train_x_orig, (train_size, image_width, image_height, 3)).astype(int)
+labels = [1 if 'kebakaran' in addr_train else 0 for addr_train in addrs_train]  # 0 = Normal, 1 = Catarac
+train_labels = np.asarray(labels).astype(int)
+train_y = np.array([train_labels][:]) # your train set labels
+        
+#Define where to look up the images -----------------------------------------------------
+test_path = 'images/test/*.jpg'
+addrs_test = glob.glob(test_path)
+    
+#Define features and labels for test ----------------------------------------------------
+
+#Load the original image
+myTestList = createFileList('images/test/')
+
+test_x_orig = []
+#For each files in the folder, save the grayscale values
+for file in myTestList:
+    test_x_orig = np.append(test_x_orig, mpimg.imread(file))
+    
+test_x_orig = np.reshape(test_x_orig, (test_size, image_width, image_height, 3)).astype(int)
+labels = [1 if 'kebakaran' in addr_test else 0 for addr_test in addrs_test]  # 0 = Normal, 1 = Catarac
+test_labels = np.asarray(labels).astype(int)
+test_y = np.array([test_labels][:]) # your train set labels
+        
+classes = np.array([b'hutan', b'kebakaran'], dtype=np.dtype('|S'))
+
+print ("Done!")
